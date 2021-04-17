@@ -8,11 +8,17 @@ namespace SqlSugar
 {
     public class PageModel
     {
+        /// <summary>
+        /// Current Page Index
+        /// </summary>
         public int PageIndex { get; set; }
+        /// <summary>
+        /// Page Size
+        /// </summary>
         public int PageSize { get; set; }
         /// <summary>
-        /// output
+        /// Data Count
         /// </summary>
-        public int PageCount { get; set; }
+        public int Count { get; set; }
     }
 }

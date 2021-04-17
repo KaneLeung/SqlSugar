@@ -887,6 +887,10 @@ namespace SqlSugar
         {
             return this.Context.Utilities.SerializeObject(this.ToPageList(pageIndex, pageSize, ref totalNumber), typeof(T));
         }
+        public virtual string ToJsonPage(PageModel pageModel)
+        {
+            return this.Context.Utilities.SerializeObject(this.ToPageList(pageModel), typeof(T));
+        }
         public List<T> ToParentList(Expression<Func<T, object>> parentIdExpression, object primaryKeyValue)
         {
             List<T> result = new List<T>() { };
@@ -997,6 +1001,14 @@ namespace SqlSugar
             var result = ToDataTablePage(pageIndex, pageSize);
             return result;
         }
+        public virtual DataTable ToDataTablePage(PageModel pageModel)
+        {
+            _RestoreMapping = false;
+            pageModel.Count = this.Count();
+            _RestoreMapping = true;
+            var result = ToDataTablePage(pageModel.PageIndex, pageModel.PageSize);
+            return result;
+        }
         public virtual DataTable ToDataTablePage(int pageIndex, int pageSize, ref int totalNumber, ref int totalPage)
         {
             var result = ToDataTablePage(pageIndex, pageSize, ref totalNumber);
@@ -1064,6 +1076,20 @@ namespace SqlSugar
 
             });
             totalNumber = count;
+            return result;
+        }
+        public virtual List<T> ToPageList(PageModel pageModel)
+        {
+            _RestoreMapping = false;
+            List<T> result = null;
+            pageModel.Count = this.Count();
+            _RestoreMapping = true;
+            QueryBuilder.IsDisabledGobalFilter = UtilMethods.GetOldValue(QueryBuilder.IsDisabledGobalFilter, () =>
+            {
+                QueryBuilder.IsDisabledGobalFilter = true;
+                if (pageModel.Count == 0) result = new List<T>();
+                else result = ToPageList(pageModel.PageIndex, pageModel.PageSize);
+            });
             return result;
         }
         public virtual List<T> ToPageList(int pageIndex, int pageSize, ref int totalNumber, ref int totalPage)
@@ -1301,6 +1327,13 @@ namespace SqlSugar
             this.Context.MappingTables = oldMapping;
             return await this.Clone().ToPageListAsync(pageIndex, pageSize);
         }
+        public async Task<List<T>> ToPageListAsync(PageModel pageModel)
+        {
+            var oldMapping = this.Context.MappingTables;
+            pageModel.Count = await this.Clone().CountAsync();
+            this.Context.MappingTables = oldMapping;
+            return await this.Clone().ToPageListAsync(pageModel.PageIndex, pageModel.PageSize);
+        }
         public async Task<string> ToJsonAsync()
         {
             if (IsCache)
@@ -1327,6 +1360,13 @@ namespace SqlSugar
             totalNumber.Value = await this.Clone().CountAsync();
             this.Context.MappingTables = oldMapping;
             return await this.Clone().ToJsonPageAsync(pageIndex, pageSize);
+        }
+        public async Task<string> ToJsonPageAsync(PageModel pageModel)
+        {
+            var oldMapping = this.Context.MappingTables;
+            pageModel.Count = await this.Clone().CountAsync();
+            this.Context.MappingTables = oldMapping;
+            return await this.Clone().ToJsonPageAsync(pageModel.PageIndex, pageModel.PageSize);
         }
         public async Task<DataTable> ToDataTableAsync()
         {
@@ -1358,7 +1398,13 @@ namespace SqlSugar
             this.Context.MappingTables = oldMapping;
             return await this.Clone().ToDataTablePageAsync(pageIndex, pageSize);
         }
-
+        public async Task<DataTable> ToDataTablePageAsync(PageModel pageModel)
+        {
+            var oldMapping = this.Context.MappingTables;
+            pageModel.Count = await this.Clone().CountAsync();
+            this.Context.MappingTables = oldMapping;
+            return await this.Clone().ToDataTablePageAsync(pageModel.PageIndex, pageModel.PageSize);
+        }
         #endregion
 
         #region Private Methods

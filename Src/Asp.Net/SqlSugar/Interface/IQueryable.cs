@@ -140,7 +140,9 @@ namespace SqlSugar
         string ToJsonPage(int pageIndex, int pageSize);
         Task<string> ToJsonPageAsync(int pageIndex, int pageSize);
         string ToJsonPage(int pageIndex, int pageSize, ref int totalNumber);
+        string ToJsonPage(PageModel pageModel);
         Task<string> ToJsonPageAsync(int pageIndex, int pageSize, RefAsync<int> totalNumber);
+        Task<string> ToJsonPageAsync(PageModel pageModel);
         KeyValuePair<string, List<SugarParameter>> ToSql();
         List<T> ToParentList(Expression<Func<T, object>> parentIdExpression, object primaryKeyValue);
         Task<List<T>> ToParentListAsync(Expression<Func<T, object>> parentIdExpression, object primaryKeyValue);
@@ -151,14 +153,17 @@ namespace SqlSugar
         DataTable ToDataTablePage(int pageIndex, int pageSize);
         Task<DataTable> ToDataTablePageAsync(int pageIndex, int pageSize);
         DataTable ToDataTablePage(int pageIndex, int pageSize, ref int totalNumber);
+        DataTable ToDataTablePage(PageModel pageModel);
         DataTable ToDataTablePage(int pageIndex, int pageSize, ref int totalNumber,ref int totalPage);
         Task<DataTable> ToDataTablePageAsync(int pageIndex, int pageSize, RefAsync<int> totalNumber);
-
+        Task<DataTable> ToDataTablePageAsync(PageModel pageModel);
         List<T> ToPageList(int pageIndex, int pageSize);
         Task<List<T>> ToPageListAsync(int pageIndex, int pageSize);
         List<T> ToPageList(int pageIndex, int pageSize, ref int totalNumber);
+        List<T> ToPageList(PageModel pageModel);
         List<T> ToPageList(int pageIndex, int pageSize, ref int totalNumber,ref int totalPage);
         Task<List<T>> ToPageListAsync(int pageIndex, int pageSize, RefAsync<int> totalNumber);
+        Task<List<T>> ToPageListAsync(PageModel pageModel);
         ISugarQueryable<T> WithCache(int cacheDurationInSeconds = int.MaxValue);
         ISugarQueryable<T> WithCacheIF(bool isCache, int cacheDurationInSeconds = int.MaxValue);
         string ToClassString(string className);
